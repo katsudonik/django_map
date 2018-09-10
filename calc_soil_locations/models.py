@@ -9,6 +9,7 @@ class SoilDisposalTask(models.Model):
     image_path  = models.TextField()
     mileage = models.DecimalField(max_digits=8, decimal_places=0)
     co2_emissions  = models.DecimalField(max_digits=13, decimal_places=3)
+    driving_time_second = models.BigIntegerField()
     arrived_to_site_flg  = models.BooleanField()
     updated_at = models.DateTimeField(default=timezone.now)
 

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core import serializers
 from .models import SoilDisposalTask
 
-from modules.distance import sum_distance, l2_norm
+from modules.distance import sum_distance, hubeny
 from modules.trajectory import get_map_html, get_trajectory_map
 from modules.screenshot import shot_jpg 
 
@@ -13,6 +13,8 @@ import numpy as np
 from numpy.random import *
 import redis
 import os
+import time
+from datetime import datetime
 
 import subprocess
 
@@ -33,8 +35,8 @@ def soil_disposal_tasks_list(request):
  
     task = fetch_task(task_id)
     
-    l2 = l2_norm(actual_points_no_time, 
-            np.array([task.at_time_soil_disposal_site_latitude, task.at_time_soil_disposal_site_longitude]).astype(float))
+    distances_to_goal = hubeny(actual_points_no_time[:,0], actual_points_no_time[:,1],
+            float(task.at_time_soil_disposal_site_latitude), float(task.at_time_soil_disposal_site_longitude))
     
     html = get_map_html(get_trajectory_map(
         actual_points_no_time,
@@ -44,7 +46,8 @@ def soil_disposal_tasks_list(request):
 
     task.mileage = distance_v
     task.co2_emissions = co2_emissions
-    task.arrived_to_site_flg = np.any(l2 < 0.05)
+    task.driving_time_second = driving_time_second(actual_points[:,0].astype(int))
+    task.arrived_to_site_flg = np.any(distances_to_goal < 1000) # unit: meter
     task.image_path = settings.SOIL_LOCATIONS['default']['image_dir'] + task_id
     task.updated_at = timezone.now()
     task.save()
@@ -76,6 +79,11 @@ def fetch_task(task_id):
     if task.at_time_soil_disposal_site_longitude is None:
         raise UnboundLocalError
     return task
+
+def driving_time_second(times):
+    time_s = time.mktime(time.strptime(str(np.amin(times)),'%Y%m%d%H%M%S'))
+    time_e = time.mktime(time.strptime(str(np.amax(times)),'%Y%m%d%H%M%S'))
+    return int(time_e - time_s)
 
 def screen_shot_soil_locations_map(request):
     task_id = request.GET.get("task_id")
