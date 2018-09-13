@@ -6,9 +6,9 @@ import numpy as np
 # late: [latitude] (ndarray)
 # longe: [longitude] (ndarray)
 def hubeny(latf, longf, late, longe):
-    a = 6378137.0
-    e2 = 0.00669438002301188
-    Mnum = 6335439.327083167
+    a = 6378137.0 # GRS80_A
+    e2 = 0.00669438002301188 # GRS80_E2
+    Mnum = 6335439.327083167 # GRS80_MNUM
     dy = np.radians(late - latf)
     dx = np.radians(longe - longf)
     my = np.radians((latf + late) / 2)
