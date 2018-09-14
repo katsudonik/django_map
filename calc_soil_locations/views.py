@@ -44,9 +44,9 @@ def soil_disposal_tasks_list(request):
         np.array([task.at_time_soil_disposal_site_latitude, task.at_time_soil_disposal_site_longitude]).astype(float)))
 
 
-    task.mileage = distance_v
-    task.co2_emissions = co2_emissions
-    task.driving_time_second = driving_time_second(actual_points[:,0].astype(int))
+    task.mileage = distance_v # unit: meter
+    task.co2_emissions = co2_emissions # unit: kg
+    task.driving_time_second = driving_time_second(actual_points[:,0].astype(int)) # unit: second
     task.arrived_to_site_flg = np.any(distances_to_goal < 1000) # unit: meter
     task.image_path = settings.SOIL_LOCATIONS['default']['image_dir'] + task_id
     task.updated_at = timezone.now()
