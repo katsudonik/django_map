@@ -25,5 +25,7 @@ REDIS = {
     }
 }
 
-
+PHANTOM_JS = {
+ 'path': '/usr/local/bin/phantomjs'
+}
 
