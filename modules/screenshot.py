@@ -1,8 +1,8 @@
 from selenium import webdriver
 from PIL import Image
 
-def shot_png(url, width, height, save_path):
-	driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs')
+def shot_png(url, width, height, save_path, phantomjs_path):
+	driver = webdriver.PhantomJS(executable_path=phantomjs_path)
 	driver.set_window_size(width, height)
 	driver.get(url)
 	driver.save_screenshot(save_path + ".png")
@@ -16,6 +16,6 @@ def convert_to_jpg(path, quality):
 # width = 1922
 # quality = 30
 # save_path = '/var/www/html/polyline'
-def shot_jpg(url, width, height, quality, save_path):
-	shot_png(url, width, height, save_path)
+def shot_jpg(url, width, height, quality, save_path, phantomjs_path):
+	shot_png(url, width, height, save_path, phantomjs_path)
 	convert_to_jpg(save_path, quality)
